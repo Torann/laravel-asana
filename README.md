@@ -23,6 +23,12 @@ You'll then need to run `composer install` to download it and have the autoloade
 $ php artisan config:publish torann/laravel-asana
 ```
 
+Now add Asana in your providers array `app/config/app.php`
+
+~~~
+'Torann\LaravelAsana\ServiceProvider'
+~~~
+
 ## Quick Examples
 
 
@@ -92,7 +98,7 @@ Asana::getTaskStories($task_id);
 #### Commenting on a task
 
 ```php
-Asana::commentOnTask($task_id, 'Please please! Don't assign me this task!');
+Asana::commentOnTask($task_id, "Please please! Don't assign me this task!");
 ```
 
 #### Add a tag to a task
