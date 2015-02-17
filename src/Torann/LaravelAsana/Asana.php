@@ -1,44 +1,66 @@
 <?php namespace Torann\LaravelAsana;
 
+use Exception;
+use InvalidArgumentException;
+
 class Asana {
 
-    private $config;
+    /**
+     * AsanaCurl instance
+     *
+     * @var \Torann\LaravelAsana\AsanaCurl
+     */
+    private $curl;
 
-    private $timeout = 10;
+    /**
+     * Default workspace
+     *
+     * @var int
+     */
+    public $defaultWorkspaceId;
 
-    public $error;
-
-    public $deafultWorkspaceId;
-    public $deafultProjectId;
-
-    private $endPointUrl = "https://app.asana.com/api/1.0/";
-    private $apiKey;
+    /**
+     * Default project
+     *
+     * @var int
+     */
+    public $defaultProjectId;
 
     /**
      * Constructor
      *
-     * @param array $config
+     * @param  array $config
+     * @throws Exception
      */
     public function __construct($config)
     {
-        $this->config = $config;
-        $this->apiKey = $config['key'];
+        // Initiate curl
+        $this->curl = new AsanaCurl(array_get($config, 'key'), array_get($config, 'accessToken'));
 
-        $this->deafultWorkspaceId = $config['workspaceId'];
-        $this->deafultProjectId = $config['projectId'];
+        // Set defaults
+        $this->defaultWorkspaceId = $config['workspaceId'];
+        $this->defaultProjectId = $config['projectId'];
     }
 
     /**
      * Returns the full user record for a single user.
-     * Call it without parameters to get the users info of the owner of the API key.
      *
      * @param  string $userId
      * @return string JSON or null
      */
     public function getUserInfo($userId = null)
     {
-        if(is_null($userId)) $userId = "me";
-        return $this->askAsana('GET', $this->endPointUrl."users/{$userId}");
+        return $this->curl->get("users/{$userId}");
+    }
+
+    /**
+     * Returns the full user record for the current user.
+     *
+     * @return string JSON or null
+     */
+    public function getCurrentUser()
+    {
+        return $this->curl->get('users/me');
     }
 
     /**
@@ -48,7 +70,7 @@ class Asana {
      */
     public function getUsers()
     {
-        return $this->askAsana('GET', $this->endPointUrl.'users');
+        return $this->curl->get('users');
     }
 
     /**
@@ -72,13 +94,14 @@ class Asana {
      *
      * @return string JSON or null
      */
-    public function createTask( $data )
+    public function createTask($data)
     {
         $data = array_merge(array(
-            'workspace' => $this->deafultWorkspaceId
+            'workspace' => $this->defaultWorkspaceId,
+            'projects'  => $this->defaultProjectId
         ), $data);
 
-        return $this->askAsana('POST', $this->endPointUrl.'tasks', json_encode( array('data' => $data) ));
+        return $this->curl->post('tasks', array('data' => $data));
     }
 
     /**
@@ -89,7 +112,7 @@ class Asana {
      */
     public function getTask($taskId)
     {
-        return $this->askAsana('GET', $this->endPointUrl."tasks/{$taskId}");
+        return $this->curl->get("tasks/{$taskId}");
     }
 
     /**
@@ -100,7 +123,7 @@ class Asana {
      */
     public function getSubTasks($taskId)
     {
-    	return $this->askAsana('GET', $this->endPointUrl."tasks/{$taskId}/subtasks");
+    	return $this->curl->get("tasks/{$taskId}/subtasks");
     }
 
     /**
@@ -112,7 +135,7 @@ class Asana {
      */
     public function updateTask($taskId, $data)
     {
-        return $this->askAsana('PUT', $this->endPointUrl."tasks/{$taskId}", json_encode( array('data' => $data) ));
+        return $this->curl->put("tasks/{$taskId}", array('data' => $data));
     }
 
     /**
@@ -128,7 +151,7 @@ class Asana {
             'file' => $this->addPostFile($file)
         );
 
-        return $this->askAsana('POST', $this->endPointUrl."tasks/{$taskId}/attachments", $data);
+        return $this->curl->post("tasks/{$taskId}/attachments", $data);
     }
 
     /**
@@ -139,7 +162,7 @@ class Asana {
      */
     public function getProjectsForTask($taskId)
     {
-        return $this->askAsana('GET', $this->endPointUrl."tasks/{$taskId}/projects");
+        return $this->curl->get("tasks/{$taskId}/projects");
     }
 
     /**
@@ -152,10 +175,10 @@ class Asana {
     public function addProjectToTask($taskId, $projectId = null)
     {
         $data = array(
-            'project' => $projectId ?: $this->deafultProjectId
+            'project' => $projectId ?: $this->defaultProjectId
         );
 
-        return $this->askAsana('POST', $this->endPointUrl."tasks/{$taskId}/addProject", json_encode( array('data' => $data) ));
+        return $this->curl->post("tasks/{$taskId}/addProject", array('data' => $data));
     }
 
     /**
@@ -168,17 +191,17 @@ class Asana {
     public function removeProjectToTask($taskId, $projectId = null)
     {
         $data = array(
-            'project' => $projectId ?: $this->deafultProjectId
+            'project' => $projectId ?: $this->defaultProjectId
         );
 
-        return $this->askAsana('POST', $this->endPointUrl."tasks/{$taskId}/removeProject", json_encode( array('data' => $data) ));
+        return $this->curl->post("tasks/{$taskId}/removeProject", array('data' => $data));
     }
 
     /**
      * Returns task by a given filter.
      * For now (limited by Asana API), you may limit your query either to a specific project or to an assignee and workspace
      *
-     * NOTE: As Asana API says, if you filter by assignee, you MUST specify a workspaceId and viceversa.
+     * NOTE: As Asana API says, if you filter by assignee, you MUST specify a workspaceId and vice-a-versa.
      *
      * @param  array $filter The filter with optional values.
      *
@@ -199,7 +222,7 @@ class Asana {
         $url .= $filter["workspace"] != ""?"&workspace={$filter["workspace"]}":"";
         if(strlen($url) > 0) $url = "?".substr($url, 1);
 
-        return $this->askAsana('GET', $this->endPointUrl."tasks{$url}");
+        return $this->curl->get("tasks{$url}");
     }
 
     /**
@@ -213,7 +236,7 @@ class Asana {
      */
     public function getTaskStories($taskId)
     {
-        return $this->askAsana('GET', $this->endPointUrl."tasks/{$taskId}/stories");
+        return $this->curl->get("tasks/{$taskId}/stories");
     }
 
     /**
@@ -230,7 +253,7 @@ class Asana {
             'text' => $text
         );
 
-        return $this->askAsana('POST', $this->endPointUrl."tasks/{$taskId}/stories", json_encode( array('data' => $data) ));
+        return $this->curl->post("tasks/{$taskId}/stories", array('data' => $data));
     }
 
     /**
@@ -246,7 +269,7 @@ class Asana {
             "tag" => $tagId
         );
 
-        return $this->askAsana('POST', $this->endPointUrl."tasks/{$taskId}/addTag", json_encode( array('data' => $data) ));
+        return $this->curl->post("tasks/{$taskId}/addTag", array('data' => $data));
     }
 
     /**
@@ -262,7 +285,7 @@ class Asana {
             "tag" => $tagId
         );
 
-        return $this->askAsana('POST', $this->endPointUrl."tasks/{$taskId}/removeTag", json_encode( array('data' => $data) ));
+        return $this->curl->post("tasks/{$taskId}/removeTag", array('data' => $data));
     }
 
     /**
@@ -281,7 +304,7 @@ class Asana {
      */
     public function createProject($data)
     {
-        return $this->askAsana('POST', $this->endPointUrl.'projects', json_encode( array('data' => $data) ));
+        return $this->curl->post('projects', array('data' => $data));
     }
 
     /**
@@ -292,9 +315,9 @@ class Asana {
      */
     public function getProject($projectId = null)
     {
-        $projectId = $projectId ?: $this->deafultProjectId;
+        $projectId = $projectId ?: $this->defaultProjectId;
 
-        return $this->askAsana('GET', $this->endPointUrl."projects/{$projectId}");
+        return $this->curl->get("projects/{$projectId}");
     }
 
     /**
@@ -309,7 +332,7 @@ class Asana {
         $archived = $archived?"true":"false";
         $opt_fields = ($opt_fields != "")?"&opt_fields={$opt_fields}":"";
 
-        return $this->askAsana('GET', $this->endPointUrl."projects?archived={$archived}{$opt_fields}");
+        return $this->curl->get("projects?archived={$archived}{$opt_fields}");
     }
 
     /**
@@ -322,9 +345,9 @@ class Asana {
     public function getProjectsInWorkspace($workspaceId = null, $archived = false)
     {
         $archived = $archived ? 1 : 0;
-        $workspaceId = $workspaceId ?: $this->deafultWorkspaceId;
+        $workspaceId = $workspaceId ?: $this->defaultWorkspaceId;
 
-        return $this->askAsana('GET', $this->endPointUrl."projects?archived={$archived}&workspace={$workspaceId}");
+        return $this->curl->get("projects?archived={$archived}&workspace={$workspaceId}");
     }
 
     /**
@@ -336,9 +359,9 @@ class Asana {
      */
     public function updateProject($projectId = null, $data)
     {
-        $projectId = $projectId ?: $this->deafultProjectId;
+        $projectId = $projectId ?: $this->defaultProjectId;
 
-        return $this->askAsana('PUT', $this->endPointUrl."projects/{$projectId}", json_encode( array('data' => $data) ));
+        return $this->curl->put("projects/{$projectId}", array('data' => $data));
     }
 
     /**
@@ -349,9 +372,9 @@ class Asana {
      */
     public function getProjectTasks($projectId = null)
     {
-        $projectId = $projectId ?: $this->deafultProjectId;
+        $projectId = $projectId ?: $this->defaultProjectId;
 
-        return $this->askAsana('GET', $this->endPointUrl."tasks?project={$projectId}");
+        return $this->curl->get("tasks?project={$projectId}");
     }
 
     /**
@@ -366,9 +389,9 @@ class Asana {
      */
     public function getProjectStories($projectId = null)
     {
-        $projectId = $projectId ?: $this->deafultProjectId;
+        $projectId = $projectId ?: $this->defaultProjectId;
 
-        return $this->askAsana('GET', $this->endPointUrl."projects/{$projectId}/stories");
+        return $this->curl->get("projects/{$projectId}/stories");
     }
 
     /**
@@ -381,13 +404,13 @@ class Asana {
      */
     public function commentOnProject($projectId = null, $text = "")
     {
-        $projectId = $projectId ?: $this->deafultProjectId;
+        $projectId = $projectId ?: $this->defaultProjectId;
 
         $data = array(
            "text" => $text
         );
 
-        return $this->askAsana('POST', $this->endPointUrl."projects/{$projectId}/stories", json_encode( array('data' => $data) ));
+        return $this->curl->post("projects/{$projectId}/stories", array('data' => $data));
     }
 
     /**
@@ -398,7 +421,7 @@ class Asana {
      */
     public function getTag($tagId)
     {
-        return $this->askAsana('GET', $this->endPointUrl."tags/{$tagId}");
+        return $this->curl->get("tags/{$tagId}");
     }
 
     /**
@@ -408,7 +431,7 @@ class Asana {
      */
     public function getTags()
     {
-        return $this->askAsana('GET', $this->endPointUrl.'tags');
+        return $this->curl->get('tags');
     }
 
     /**
@@ -420,7 +443,7 @@ class Asana {
      */
     public function updateTag($tagId, $data)
     {
-        return $this->askAsana('PUT', $this->endPointUrl."tags/{$tagId}", json_encode( array('data' => $data) ));
+        return $this->curl->put("tags/{$tagId}", array('data' => $data));
     }
 
     /**
@@ -431,7 +454,7 @@ class Asana {
      */
     public function getTasksWithTag($tagId)
     {
-        return $this->askAsana('GET', $this->endPointUrl."tags/{$tagId}/tasks");
+        return $this->curl->get("tags/{$tagId}/tasks");
     }
 
     /**
@@ -442,7 +465,7 @@ class Asana {
      */
     public function getSingleStory($storyId)
     {
-        return $this->askAsana('GET', $this->endPointUrl."stories/{$storyId}");
+        return $this->curl->get("stories/{$storyId}");
     }
 
     /**
@@ -452,7 +475,7 @@ class Asana {
      */
     public function getWorkspaces()
     {
-        return $this->askAsana('GET', $this->endPointUrl.'workspaces');
+        return $this->curl->get('workspaces');
     }
 
     /**
@@ -464,9 +487,9 @@ class Asana {
      */
     public function updateWorkspace($workspaceId = null, $data = array("name" => ""))
     {
-        $workspaceId = $workspaceId ?: $this->deafultWorkspaceId;
+        $workspaceId = $workspaceId ?: $this->defaultWorkspaceId;
 
-        return $this->askAsana('PUT', $this->endPointUrl."workspaces/{$workspaceId}", json_encode( array('data' => $data) ));
+        return $this->curl->put("workspaces/{$workspaceId}", array('data' => $data));
     }
 
     /**
@@ -480,9 +503,9 @@ class Asana {
      */
     public function getWorkspaceTasks($workspaceId = null, $assignee = "me")
     {
-        $workspaceId = $workspaceId ?: $this->deafultWorkspaceId;
+        $workspaceId = $workspaceId ?: $this->defaultWorkspaceId;
 
-        return $this->askAsana('GET', $this->endPointUrl."tasks?workspace={$workspaceId}&assignee={$assignee}");
+        return $this->curl->get("tasks?workspace={$workspaceId}&assignee={$assignee}");
     }
 
     /**
@@ -493,9 +516,9 @@ class Asana {
      */
     public function getWorkspaceTags($workspaceId = null)
     {
-        $workspaceId = $workspaceId ?: $this->deafultWorkspaceId;
+        $workspaceId = $workspaceId ?: $this->defaultWorkspaceId;
 
-        return $this->askAsana('GET', $this->endPointUrl."workspaces/{$workspaceId}/tags");
+        return $this->curl->get("workspaces/{$workspaceId}/tags");
     }
 
     /**
@@ -506,86 +529,18 @@ class Asana {
      */
     public function getWorkspaceUsers($workspaceId = null)
     {
-        $workspaceId = $workspaceId ?: $this->deafultWorkspaceId;
+        $workspaceId = $workspaceId ?: $this->defaultWorkspaceId;
 
-        return $this->askAsana('GET', $this->endPointUrl."workspaces/{$workspaceId}/users");
+        return $this->curl->get("workspaces/{$workspaceId}/users");
     }
 
     /**
-     * This function communicates with Asana REST API.
-     * You don't need to call this function directly. It's only for inner class working.
+     * Return error
      *
-     * @param  int    $method
-     * @param  string $url
-     * @param  string $data Must be a json string
-     * @return string JSON or null
-     */
-    private function askAsana($method, $url, $data = null)
-    {
-        $this->error = null;
-
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, $this->timeout);
-        curl_setopt($curl, CURLOPT_TIMEOUT, $this->timeout);
-        curl_setopt($curl, CURLOPT_FAILONERROR, true);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($curl, CURLOPT_USERPWD, "{$this->apiKey}:");
-        curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
-
-        if($method == 'POST') {
-            curl_setopt($curl, CURLOPT_POST, true);
-        }
-        else if($method == 'PUT') {
-            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
-        }
-
-        if(!is_null($data) && ($method == 'POST' || $method == 'PUT')) {
-            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-        }
-
-        try {
-            $return = curl_exec($curl);
-            $return = json_decode($return);
-        }
-        catch(Exception $e) {
-            $this->error = $e->getMessage();
-            $return = null;
-        }
-
-        curl_close($curl);
-
-        return $return;
-    }
-
-    /**
-     * POST file upload
-     *
-     * @param  string $filename File to be uploaded
      * @return mixed
-     * @throws InvalidArgumentException
      */
-    public function addPostFile($filename)
+    public function getErrors()
     {
-        // Remove leading @ symbol
-        if (strpos($filename, '@') === 0) {
-            $filename = substr($filename, 1);
-        }
-
-        if (!is_readable($filename)) {
-            throw new InvalidArgumentException("Unable to open {$filename} for reading");
-        }
-
-        // PHP 5.5 introduced a CurlFile object that deprecates the old @filename syntax
-        // See: https://wiki.php.net/rfc/curl-file-upload
-        if (function_exists('curl_file_create')) {
-            return curl_file_create($filename);
-        }
-
-        // Use the old style if using an older version of PHP
-        return "@{$filename}";
+        return $this->curl->getErrors();
     }
 }
