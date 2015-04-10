@@ -139,6 +139,17 @@ class Asana {
     }
 
     /**
+     * Delete a task
+     *
+     * @param  string $taskId
+     * @return string JSON or null
+     */
+    public function deleteTask($taskId)
+    {
+        return $this->curl->delete("tasks/{$taskId}");
+    }
+
+    /**
      * Add Attachment to a task
      *
      * @param  string $taskId
