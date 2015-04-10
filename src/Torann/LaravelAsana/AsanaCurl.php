@@ -78,6 +78,17 @@ class AsanaCurl {
     }
 
     /**
+     * Delete request
+     *
+     * @param string $url
+     * @param array $data
+     */
+    public function delete($url, array $data = array())
+    {
+        return $this->request(self::METHOD_DELETE, $url, $data);
+    }
+
+    /**
      * Return error
      *
      * @return mixed
