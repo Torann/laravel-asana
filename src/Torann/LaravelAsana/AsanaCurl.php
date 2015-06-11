@@ -21,6 +21,7 @@ class AsanaCurl {
 
     private $apiKey;
     private $accessToken;
+    private $syncKey;
     private $curl;
 
     /**
@@ -78,6 +79,17 @@ class AsanaCurl {
     }
 
     /**
+     * Delete request
+     *
+     * @param string $url
+     * @param array $data
+     */
+    public function delete($url, array $data = array())
+    {
+        return $this->request(self::METHOD_DELETE, $url, $data);
+    }
+
+    /**
      * Return error
      *
      * @return mixed
@@ -85,6 +97,16 @@ class AsanaCurl {
     public function getErrors()
     {
         return $this->errors;
+    }
+
+    /**
+     * Return sync key
+     *
+     * @return mixed
+     */
+    public function getSyncKey()
+    {
+        return $this->syncKey;
     }
 
     /**
@@ -234,6 +256,12 @@ class AsanaCurl {
             $errors = implode(', ', array_map(function($error) {
                 return $error->message;
             }, $response->errors));
+
+            // fetch sync key for event handling
+            if (isset($response->sync))
+            {
+                $this->syncKey = $response->sync;
+            }
 
             throw new Exception($errors, $resultStatus['http_code']);
         }

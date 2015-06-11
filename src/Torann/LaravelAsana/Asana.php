@@ -123,7 +123,7 @@ class Asana {
      */
     public function getSubTasks($taskId)
     {
-    	return $this->curl->get("tasks/{$taskId}/subtasks");
+        return $this->curl->get("tasks/{$taskId}/subtasks");
     }
 
     /**
@@ -136,6 +136,17 @@ class Asana {
     public function updateTask($taskId, $data)
     {
         return $this->curl->put("tasks/{$taskId}", array('data' => $data));
+    }
+
+    /**
+     * Delete a task
+     *
+     * @param  string $taskId
+     * @return string JSON or null
+     */
+    public function deleteTask($taskId)
+    {
+        return $this->curl->delete("tasks/{$taskId}");
     }
 
     /**
@@ -532,6 +543,29 @@ class Asana {
         $workspaceId = $workspaceId ?: $this->defaultWorkspaceId;
 
         return $this->curl->get("workspaces/{$workspaceId}/users");
+    }
+
+    /**
+     * Returns events of a given project
+     *
+     * @param  string $projectId The id of the project
+     * @return string JSON or null
+     */
+    public function getProjectEvents($projectId = null)
+    {
+        $projectId = $projectId ?: $this->defaultProjectId;
+        
+        return $this->curl->get("projects/{$projectId}/events");
+    }
+
+    /**
+     * Return event sync key
+     *
+     * @return mixed
+     */
+    public function getSyncKey()
+    {
+        return $this->curl->getSyncKey();
     }
 
     /**
