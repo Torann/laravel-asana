@@ -8,7 +8,7 @@
 
 - [Laravel Asana on Packagist](https://packagist.org/packages/torann/laravel-asana)
 - [Laravel Asana on GitHub](https://github.com/torann/laravel-asana)
-- [Laravel 4 Installation](https://github.com/Torann/laravel-asana/tree/0.1.1)
+- [Laravel 4 Installation](https://github.com/Torann/laravel-asana/tree/0.1.2)
 
 To get the latest version of Laravel Asana simply require it in your `composer.json` file.
 
@@ -87,6 +87,12 @@ Asana::createTask(array(
    'assignee'  => 'foo@bar.com', // Assign task to...
    'followers' => array('3714136', '5900783') // We add some followers to the task... (this time by ID)
 ));
+```
+
+#### Delete a task
+
+```php
+Asana::deleteTask($task_id);
 ```
 
 #### Adding task to project
