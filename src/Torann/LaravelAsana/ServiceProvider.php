@@ -1,15 +1,6 @@
 <?php namespace Torann\LaravelAsana;
 
-use Illuminate\Foundation\AliasLoader;
-
 class ServiceProvider extends \Illuminate\Support\ServiceProvider {
-
-	/**
-	 * Indicates if loading of the provider is deferred.
-	 *
-	 * @var bool
-	 */
-	protected $defer = false;
 
 	/**
 	 * Bootstrap the application events.
@@ -18,11 +9,9 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider {
 	 */
 	public function boot()
 	{
-        // Register the package namespace
-        $this->package('torann/laravel-asana');
-
-		// Auto create app alias with boot method.
-		AliasLoader::getInstance()->alias('Asana', 'Torann\LaravelAsana\Facade');
+        $this->publishes([
+            __DIR__.'/../../config/asana.php' => config_path('asana.php'),
+        ]);
 	}
 
 	/**
@@ -34,7 +23,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider {
 	{
 		$this->app['torann.asana'] = $this->app->share(function($app)
 		{
-            $config = $app->config->get('laravel-asana::config', array());
+            $config = $app->config->get('asana', array());
 
 			return new Asana($config);
 		});
@@ -47,6 +36,6 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider {
      */
     public function provides()
     {
-        return array();
+        return [];
     }
 }
