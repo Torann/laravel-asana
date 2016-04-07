@@ -1,23 +1,25 @@
-<?php namespace Torann\LaravelAsana;
+<?php
+
+namespace Torann\LaravelAsana;
 
 use Exception;
 use InvalidArgumentException;
 
-class AsanaCurl {
-
+class AsanaCurl
+{
     /**
      * Define method constants
      */
-    const METHOD_POST   = 'POST';
-    const METHOD_PUT    = 'PUT';
-    const METHOD_GET    = 'GET';
+    const METHOD_POST = 'POST';
+    const METHOD_PUT = 'PUT';
+    const METHOD_GET = 'GET';
     const METHOD_DELETE = 'DELETE';
 
     private $timeout = 10;
 
     private $endpoint = "https://app.asana.com/api/1.0/";
 
-    private $errors = array();
+    private $errors = [];
 
     private $apiKey;
     private $accessToken;
@@ -29,15 +31,15 @@ class AsanaCurl {
      *
      * @param  string $key
      * @param  string $token
+     *
      * @throws Exception
      */
     public function __construct($key = null, $token = null)
     {
-        if(! empty($key))
-        {
+        if (!empty($key)) {
             $this->apiKey = $key;
         }
-        else if(! empty($token)) {
+        else if (!empty($token)) {
             $this->accessToken = $token;
         }
         else {
@@ -45,11 +47,12 @@ class AsanaCurl {
         }
     }
 
-
     /**
      * Get request
      *
      * @param string $url
+     *
+     * @return string|null
      */
     public function get($url)
     {
@@ -60,9 +63,11 @@ class AsanaCurl {
      * Post request
      *
      * @param string $url
-     * @param array $data
+     * @param array  $data
+     *
+     * @return string|null
      */
-    public function post($url, array $data = array())
+    public function post($url, array $data = [])
     {
         return $this->request(self::METHOD_POST, $url, $data);
     }
@@ -71,9 +76,11 @@ class AsanaCurl {
      * Put request
      *
      * @param string $url
-     * @param array $data
+     * @param array  $data
+     *
+     * @return string|null
      */
-    public function put($url, array $data = array())
+    public function put($url, array $data = [])
     {
         return $this->request(self::METHOD_PUT, $url, $data);
     }
@@ -82,9 +89,11 @@ class AsanaCurl {
      * Delete request
      *
      * @param string $url
-     * @param array $data
+     * @param array  $data
+     *
+     * @return string|null
      */
-    public function delete($url, array $data = array())
+    public function delete($url, array $data = [])
     {
         return $this->request(self::METHOD_DELETE, $url, $data);
     }
@@ -117,29 +126,26 @@ class AsanaCurl {
      * @param  string $url
      * @param  string $data Must be a json string
      *
-     * @return string JSON or null
+     * @return string|null
      */
     private function request($method, $url, $data = null)
     {
         $this->curl = curl_init();
         $this->setCurlOptions($url);
 
-        if (! empty($this->apiKey))
-        {
+        if (!empty($this->apiKey)) {
             $this->sendWithAPIKey();
 
             // Send as JSON unless attaching file to task or null data
-            if (is_null($data) || empty($data['file'])){
-                curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+            if (is_null($data) || empty($data['file'])) {
+                curl_setopt($this->curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
             }
         }
-        else if (! empty($this->accessToken))
-        {
+        else if (!empty($this->accessToken)) {
             $this->sendWithAccessToken();
         }
 
-        switch($method)
-        {
+        switch ($method) {
             case self::METHOD_POST:
                 curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'POST');
                 break;
@@ -151,9 +157,8 @@ class AsanaCurl {
                 break;
         }
 
-        if (! is_null($data) && ($method == self::METHOD_POST || $method == self::METHOD_PUT))
-        {
-            curl_setopt( $this->curl, CURLOPT_POST, 1);
+        if (!is_null($data) && ($method == self::METHOD_POST || $method == self::METHOD_PUT)) {
+            curl_setopt($this->curl, CURLOPT_POST, 1);
             curl_setopt($this->curl, CURLOPT_POSTFIELDS, json_encode($data));
         }
 
@@ -161,8 +166,7 @@ class AsanaCurl {
         try {
             $response = curl_exec($this->curl);
             $response = json_decode($response);
-        }
-        catch(Exception $e) {
+        } catch (Exception $e) {
             $this->errors = [$e->getMessage()];
             $response = null;
         }
@@ -180,6 +184,7 @@ class AsanaCurl {
      * POST file upload
      *
      * @param  string $filename File to be uploaded
+     *
      * @return mixed
      * @throws \InvalidArgumentException
      */
@@ -225,17 +230,17 @@ class AsanaCurl {
     private function sendWithAPIKey()
     {
         // Send with API key.
-        curl_setopt($this->curl, CURLOPT_USERPWD,  "{$this->apiKey}:");
+        curl_setopt($this->curl, CURLOPT_USERPWD, "{$this->apiKey}:");
         curl_setopt($this->curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     }
 
     private function sendWithAccessToken()
     {
         // Send with auth token.
-        curl_setopt($this->curl, CURLOPT_HTTPHEADER, array(
+        curl_setopt($this->curl, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json',
             'Authorization: Bearer ' . $this->accessToken
-        ));
+        ]);
     }
 
     /*
@@ -248,18 +253,16 @@ class AsanaCurl {
     private function checkForCurlErrors($response)
     {
         // Error from server
-        if($response && isset($response->errors))
-        {
+        if ($response && isset($response->errors)) {
             $resultStatus = curl_getinfo($this->curl);
 
             // Get errors
-            $errors = implode(', ', array_map(function($error) {
+            $errors = implode(', ', array_map(function ($error) {
                 return $error->message;
             }, $response->errors));
 
             // fetch sync key for event handling
-            if (isset($response->sync))
-            {
+            if (isset($response->sync)) {
                 $this->syncKey = $response->sync;
             }
 
@@ -267,10 +270,8 @@ class AsanaCurl {
         }
 
         // General cURL error
-        else if (! $response)
-        {
+        else if (!$response) {
             throw new Exception(curl_error($this->curl), curl_errno($this->curl));
         }
     }
-
 }

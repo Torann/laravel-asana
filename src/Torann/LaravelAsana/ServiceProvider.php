@@ -1,33 +1,46 @@
-<?php namespace Torann\LaravelAsana;
+<?php 
 
-class ServiceProvider extends \Illuminate\Support\ServiceProvider {
+namespace Torann\LaravelAsana;
 
-	/**
-	 * Bootstrap the application events.
-	 *
-	 * @return void
-	 */
-	public function boot()
-	{
-        $this->publishes([
-            __DIR__.'/../../config/asana.php' => config_path('asana.php'),
-        ]);
-	}
+class ServiceProvider extends \Illuminate\Support\ServiceProvider
+{
+    /**
+     * Bootstrap the application events.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        if ($this->isLumen() === false) {
+            $this->publishes([
+                __DIR__ . '/../../config/asana.php' => config_path('asana.php'),
+            ]);
+        }
+    }
 
-	/**
-	 * Register the service provider.
-	 *
-	 * @return void
-	 */
-	public function register()
-	{
-		$this->app['torann.asana'] = $this->app->share(function($app)
-		{
-            $config = $app->config->get('asana', array());
+    /**
+     * Register the service provider.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->app->bind('torann.asana', function ($app) {
+            $config = $app->config->get('asana', []);
 
-			return new Asana($config);
-		});
-	}
+            return new Asana($config);
+        });
+    }
+
+    /**
+     * Check if package is running under Lumen app
+     *
+     * @return bool
+     */
+    protected function isLumen()
+    {
+        return str_contains($this->app->version(), 'Lumen') === true;
+    }
 
     /**
      * Get the services provided by the provider.

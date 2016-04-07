@@ -10,34 +10,50 @@
 - [Laravel Asana on GitHub](https://github.com/torann/laravel-asana)
 - [Laravel 4 Installation](https://github.com/Torann/laravel-asana/tree/0.1.2)
 
-To get the latest version of Laravel Asana simply require it in your `composer.json` file.
+### Composer
 
-~~~
-"torann/laravel-asana": "0.2.*@dev"
-~~~
+From the command line run:
 
-You'll then need to run `composer install` to download it and have the autoloader updated.
+```
+$ composer require torann/laravel-asana
+```
+
+### Laravel
 
 Once installed you need to register the service provider with the application. Open up `config/app.php` and find the `providers` key.
 
-```php
-'providers' => array(
-    'Torann\LaravelAsana\ServiceProvider',
-)
+``` php
+'providers' => [
+
+    \Torann\LaravelAsana\ServiceProvider::class,
+
+]
 ```
 
-Laravel Asana also ships with a facade which provides the static syntax for creating collections. You can register the facade in the aliases key of your `config/app.php` file.
+### Lumen
+
+For Lumen register the service provider in `bootstrap/app.php`.
+
+``` php
+$app->register(\Torann\LaravelAsana\ServiceProvider::class);
+```
+
+### Facade
+
+This package also ships with a facade which provides the static syntax for creating collections. You can register the facade in the aliases key of your `config/app.php` file.
 
 ```php
-'aliases' => array(
+'aliases' => [
     'Asana' => 'Torann\LaravelAsana\Facade',
-)
+]
 ```
 
-### Create configuration file using artisan
+### Publish the configurations
+
+Run this on the command line from the root of your project:
 
 ```
-$ php artisan vendor:publish
+$ php artisan vendor:publish --provider="Torann\LaravelAsana\ServiceProvider"
 ```
 
 A configuration file will be publish to `config/asana.php`.
@@ -81,12 +97,12 @@ Asana::getSubTasks($task_id);
 #### Creating a task
 
 ```php
-Asana::createTask(array(
+Asana::createTask([
    'workspace' => '176825', // Workspace ID
    'name'      => 'Hello World!', // Name of task
    'assignee'  => 'foo@bar.com', // Assign task to...
-   'followers' => array('3714136', '5900783') // We add some followers to the task... (this time by ID)
-));
+   'followers' => ['3714136', '5900783'] // We add some followers to the task... (this time by ID)
+]);
 ```
 
 #### Delete a task
@@ -134,11 +150,11 @@ Asana::removeTagFromTask($task_id, $tag_id);
 #### Create a project
 
 ```php
-Asana::createProject(array(
+Asana::createProject([
     "workspace" => "1768",
     "name"      => "Foo Project!",
     "notes"     => "This is a test project"
-));
+]);
 ```
 
 #### Getting projects in all workspaces
@@ -158,10 +174,10 @@ Asana::getProjectsInWorkspace($workspace_id, $archived);
 #### Updating project info
 
 ```php
-Asana::updateProject($project_id, array(
+Asana::updateProject($project_id, [
     'name' => 'This is a new cool project!',
     'notes' => 'At first, it wasn't cool, but after this name change, it is!'
-));
+]);
 ```
 
 #### Get project tasks
@@ -225,7 +241,7 @@ Asana::getWorkspaces();
 #### Update workspace
 
 ```php
-$data = array('name' => '');
+$data = ['name' => ''];
 
 Asana::updateWorkspace($workspace_i, $data);
 ```
@@ -255,14 +271,19 @@ Asana::getWorkspaceUsers($workspace_id);
 If you specify an assignee, you must also specify a workspace to filter on.
 
 ```php
-Asana::getTasksByFilter(array(
+Asana::getTasksByFilter([
     'assignee'  => 1121,
     'project'   => 37373729,
     'workspace' => 111221
-));
+]);
 ```
 
 ## Change Log
+
+#### v0.2.1
+
+- Add support for Lumen
+- Code cleanup
 
 #### v0.2.0
 

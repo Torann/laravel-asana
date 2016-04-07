@@ -1,10 +1,11 @@
-<?php namespace Torann\LaravelAsana;
+<?php
+
+namespace Torann\LaravelAsana;
 
 use Exception;
-use InvalidArgumentException;
 
-class Asana {
-
+class Asana
+{
     /**
      * AsanaCurl instance
      *
@@ -30,6 +31,7 @@ class Asana {
      * Constructor
      *
      * @param  array $config
+     *
      * @throws Exception
      */
     public function __construct($config)
@@ -46,7 +48,8 @@ class Asana {
      * Returns the full user record for a single user.
      *
      * @param  string $userId
-     * @return string JSON or null
+     *
+     * @return string|null
      */
     public function getUserInfo($userId = null)
     {
@@ -56,7 +59,7 @@ class Asana {
     /**
      * Returns the full user record for the current user.
      *
-     * @return string JSON or null
+     * @return string|null
      */
     public function getCurrentUser()
     {
@@ -66,7 +69,7 @@ class Asana {
     /**
      * Returns the user records for all users in all workspaces you have access.
      *
-     * @return string JSON or null
+     * @return string|null
      */
     public function getUsers()
     {
@@ -75,10 +78,11 @@ class Asana {
 
     /**
      * Function to create a task.
+     *
      * For assign or remove the task to a project, use the addProjectToTask and removeProjectToTask.
      *
+     * @param array $data
      *
-     * @param array $data Array of data for the task following the Asana API documentation.
      * Example:
      *
      * array(
@@ -92,23 +96,24 @@ class Asana {
      *     )
      * )
      *
-     * @return string JSON or null
+     * @return string|null
      */
     public function createTask($data)
     {
-        $data = array_merge(array(
+        $data = array_merge([
             'workspace' => $this->defaultWorkspaceId,
-            'projects'  => $this->defaultProjectId
-        ), $data);
+            'projects' => $this->defaultProjectId
+        ], $data);
 
-        return $this->curl->post('tasks', array('data' => $data));
+        return $this->curl->post('tasks', ['data' => $data]);
     }
 
     /**
      * Returns task information
      *
      * @param  string $taskId
-     * @return string JSON or null
+     *
+     * @return string|null
      */
     public function getTask($taskId)
     {
@@ -119,7 +124,8 @@ class Asana {
      * Returns sub-task information
      *
      * @param  string $taskId
-     * @return string JSON or null
+     *
+     * @return string|null
      */
     public function getSubTasks($taskId)
     {
@@ -130,19 +136,21 @@ class Asana {
      * Updates a task
      *
      * @param  string $taskId
-     * @param  array $data See, createTask function comments for proper parameter info.
-     * @return string JSON or null
+     * @param  array  $data
+     *
+     * @return string|null
      */
     public function updateTask($taskId, $data)
     {
-        return $this->curl->put("tasks/{$taskId}", array('data' => $data));
+        return $this->curl->put("tasks/{$taskId}", ['data' => $data]);
     }
 
     /**
      * Delete a task
      *
      * @param  string $taskId
-     * @return string JSON or null
+     *
+     * @return string|null
      */
     public function deleteTask($taskId)
     {
@@ -153,14 +161,15 @@ class Asana {
      * Add Attachment to a task
      *
      * @param  string $taskId
-     * @param  array $file
-     * @return string JSON or null
+     * @param  array  $file
+     *
+     * @return string|null
      */
     public function addTaskAttachment($taskId, $file)
     {
-        $data = array(
+        $data = [
             'file' => $this->addPostFile($file)
-        );
+        ];
 
         return $this->curl->post("tasks/{$taskId}/attachments", $data);
     }
@@ -169,7 +178,8 @@ class Asana {
      * Returns the projects associated to the task.
      *
      * @param  string $taskId
-     * @return string JSON or null
+     *
+     * @return string|null
      */
     public function getProjectsForTask($taskId)
     {
@@ -177,44 +187,50 @@ class Asana {
     }
 
     /**
-     * Adds a project to task. If successful, will return success and an empty data block.
+     * Adds a project to task. If successful, will
+     * return success and an empty data block.
      *
      * @param  string $taskId
      * @param  string $projectId
-     * @return string JSON or null
+     *
+     * @return string|null
      */
     public function addProjectToTask($taskId, $projectId = null)
     {
-        $data = array(
+        $data = [
             'project' => $projectId ?: $this->defaultProjectId
-        );
+        ];
 
-        return $this->curl->post("tasks/{$taskId}/addProject", array('data' => $data));
+        return $this->curl->post("tasks/{$taskId}/addProject", ['data' => $data]);
     }
 
     /**
-     * Removes project from task. If successful, will return success and an empty data block.
+     * Removes project from task. If successful, will
+     * return success and an empty data block.
      *
      * @param  string $taskId
      * @param  string $projectId
-     * @return string JSON or null
+     *
+     * @return string|null
      */
     public function removeProjectToTask($taskId, $projectId = null)
     {
-        $data = array(
+        $data = [
             'project' => $projectId ?: $this->defaultProjectId
-        );
+        ];
 
-        return $this->curl->post("tasks/{$taskId}/removeProject", array('data' => $data));
+        return $this->curl->post("tasks/{$taskId}/removeProject", ['data' => $data]);
     }
 
     /**
      * Returns task by a given filter.
-     * For now (limited by Asana API), you may limit your query either to a specific project or to an assignee and workspace
+     *
+     * For now (limited by Asana API), you may limit your
+     * query either to a specific project or to an assignee and workspace
      *
      * NOTE: As Asana API says, if you filter by assignee, you MUST specify a workspaceId and vice-a-versa.
      *
-     * @param  array $filter The filter with optional values.
+     * @param array $filter
      *
      * array(
      *     "assignee" => "",
@@ -222,16 +238,16 @@ class Asana {
      *     "workspace" => 0
      * )
      *
-     * @return string JSON or null
+     * @return string|null
      */
-    public function getTasksByFilter($filter = array("assignee" => "", "project" => "", "workspace" => ""))
+    public function getTasksByFilter($filter = ["assignee" => "", "project" => "", "workspace" => ""])
     {
         $url = "";
-        $filter = array_merge(array("assignee" => "", "project" => "", "workspace" => ""), $filter);
-        $url .= $filter["assignee"] != ""?"&assignee={$filter["assignee"]}":"";
-        $url .= $filter["project"] != ""?"&project={$filter["project"]}":"";
-        $url .= $filter["workspace"] != ""?"&workspace={$filter["workspace"]}":"";
-        if(strlen($url) > 0) $url = "?".substr($url, 1);
+        $filter = array_merge(["assignee" => "", "project" => "", "workspace" => ""], $filter);
+        $url .= $filter["assignee"] != "" ? "&assignee={$filter["assignee"]}" : "";
+        $url .= $filter["project"] != "" ? "&project={$filter["project"]}" : "";
+        $url .= $filter["workspace"] != "" ? "&workspace={$filter["workspace"]}" : "";
+        if (strlen($url) > 0) $url = "?" . substr($url, 1);
 
         return $this->curl->get("tasks{$url}");
     }
@@ -240,10 +256,12 @@ class Asana {
      * Returns the list of stories associated with the object.
      * As usual with queries, stories are returned in compact form.
      * However, the compact form for stories contains more information by default than just the ID.
+     *
      * There is presently no way to get a filtered set of stories.
      *
      * @param  string $taskId
-     * @return string JSON or null
+     *
+     * @return string|null
      */
     public function getTaskStories($taskId)
     {
@@ -252,19 +270,22 @@ class Asana {
 
     /**
      * Adds a comment to a task.
-     * The comment will be authored by the authorized user, and timestamped when the server receives the request.
+     *
+     * The comment will be authored by the authorized user, and
+     * timestamped when the server receives the request.
      *
      * @param  string $taskId
      * @param  string $text
-     * @return string JSON or null
+     *
+     * @return string|null
      */
     public function commentOnTask($taskId, $text = "")
     {
-        $data = array(
+        $data = [
             'text' => $text
-        );
+        ];
 
-        return $this->curl->post("tasks/{$taskId}/stories", array('data' => $data));
+        return $this->curl->post("tasks/{$taskId}/stories", ['data' => $data]);
     }
 
     /**
@@ -272,15 +293,16 @@ class Asana {
      *
      * @param  string $taskId
      * @param  string $tagId
-     * @return string JSON or null
+     *
+     * @return string|null
      */
     public function addTagToTask($taskId, $tagId)
     {
-        $data = array(
+        $data = [
             "tag" => $tagId
-        );
+        ];
 
-        return $this->curl->post("tasks/{$taskId}/addTag", array('data' => $data));
+        return $this->curl->post("tasks/{$taskId}/addTag", ['data' => $data]);
     }
 
     /**
@@ -288,21 +310,23 @@ class Asana {
      *
      * @param  string $taskId
      * @param  string $tagId
-     * @return string JSON or null
+     *
+     * @return string|null
      */
     public function removeTagFromTask($taskId, $tagId)
     {
-        $data = array(
+        $data = [
             "tag" => $tagId
-        );
+        ];
 
-        return $this->curl->post("tasks/{$taskId}/removeTag", array('data' => $data));
+        return $this->curl->post("tasks/{$taskId}/removeTag", ['data' => $data]);
     }
 
     /**
      * Function to create a project.
      *
      * @param array $data Array of data for the project following the Asana API documentation.
+     *
      * Example:
      *
      * array(
@@ -311,18 +335,19 @@ class Asana {
      *     "notes" => "This is a test project"
      * )
      *
-     * @return string JSON or null
+     * @return string|null
      */
     public function createProject($data)
     {
-        return $this->curl->post('projects', array('data' => $data));
+        return $this->curl->post('projects', ['data' => $data]);
     }
 
     /**
      * Returns the full record for a single project.
      *
      * @param  string $projectId
-     * @return string JSON or null
+     *
+     * @return string|null
      */
     public function getProject($projectId = null)
     {
@@ -334,14 +359,15 @@ class Asana {
     /**
      * Returns the projects in all workspaces containing archived ones or not.
      *
-     * @param  boolean $archived Return archived projects or not
+     * @param  boolean $archived   Return archived projects or not
      * @param  string  $opt_fields Return results with optional parameters
+     *
      * @return string  JSON or null
      */
     public function getProjects($archived = false, $opt_fields = "")
     {
-        $archived = $archived?"true":"false";
-        $opt_fields = ($opt_fields != "")?"&opt_fields={$opt_fields}":"";
+        $archived = $archived ? "true" : "false";
+        $opt_fields = ($opt_fields != "") ? "&opt_fields={$opt_fields}" : "";
 
         return $this->curl->get("projects?archived={$archived}{$opt_fields}");
     }
@@ -351,6 +377,7 @@ class Asana {
      *
      * @param  string  $workspaceId
      * @param  boolean $archived Return archived projects or not
+     *
      * @return string  JSON or null
      */
     public function getProjectsInWorkspace($workspaceId = null, $archived = false)
@@ -362,24 +389,27 @@ class Asana {
     }
 
     /**
-     * This method modifies the fields of a project provided in the request, then returns the full updated record.
+     * This method modifies the fields of a project provided
+     * in the request, then returns the full updated record.
      *
      * @param  string $projectId
-     * @param  array  $data An array containing fields to update, see Asana API if needed.
-     * @return string JSON or null
+     * @param  array  $data
+     *
+     * @return string|null
      */
     public function updateProject($projectId = null, $data)
     {
         $projectId = $projectId ?: $this->defaultProjectId;
 
-        return $this->curl->put("projects/{$projectId}", array('data' => $data));
+        return $this->curl->put("projects/{$projectId}", ['data' => $data]);
     }
 
     /**
      * Returns all unarchived tasks of a given project
      *
      * @param  string $projectId
-     * @return string JSON or null
+     *
+     * @return string|null
      */
     public function getProjectTasks($projectId = null)
     {
@@ -396,7 +426,8 @@ class Asana {
      * There is presently no way to get a filtered set of stories.
      *
      * @param  string $projectId
-     * @return string JSON or null
+     *
+     * @return string|null
      */
     public function getProjectStories($projectId = null)
     {
@@ -407,28 +438,32 @@ class Asana {
 
     /**
      * Adds a comment to a project
-     * The comment will be authored by the authorized user, and timestamped when the server receives the request.
+     *
+     * The comment will be authored by the authorized user, and
+     * timestamped when the server receives the request.
      *
      * @param  string $projectId
      * @param  string $text
-     * @return string JSON or null
+     *
+     * @return string|null
      */
     public function commentOnProject($projectId = null, $text = "")
     {
         $projectId = $projectId ?: $this->defaultProjectId;
 
-        $data = array(
-           "text" => $text
-        );
+        $data = [
+            "text" => $text
+        ];
 
-        return $this->curl->post("projects/{$projectId}/stories", array('data' => $data));
+        return $this->curl->post("projects/{$projectId}/stories", ['data' => $data]);
     }
 
     /**
      * Returns the full record for a single tag.
      *
      * @param  string $tagId
-     * @return string JSON or null
+     *
+     * @return string|null
      */
     public function getTag($tagId)
     {
@@ -438,7 +473,7 @@ class Asana {
     /**
      * Returns the full record for all tags in all workspaces.
      *
-     * @return string JSON or null
+     * @return string|null
      */
     public function getTags()
     {
@@ -446,22 +481,26 @@ class Asana {
     }
 
     /**
-     * Modifies the fields of a tag provided in the request, then returns the full updated record.
+     * Modifies the fields of a tag provided in the request,
+     * then returns the full updated record.
      *
      * @param  string $tagId
-     * @param  array $data An array containing fields to update, see Asana API if needed.
-     * @return string JSON or null
+     * @param  array  $data
+     *
+     * @return string|null
      */
     public function updateTag($tagId, $data)
     {
-        return $this->curl->put("tags/{$tagId}", array('data' => $data));
+        return $this->curl->put("tags/{$tagId}", ['data' => $data]);
     }
 
     /**
-     * Returns the list of all tasks with this tag. Tasks can have more than one tag at a time.
+     * Returns the list of all tasks with this tag. Tasks
+     * can have more than one tag at a time.
      *
      * @param  string $tagId
-     * @return string JSON or null
+     *
+     * @return string|null
      */
     public function getTasksWithTag($tagId)
     {
@@ -472,7 +511,8 @@ class Asana {
      * Returns the full record for a single story.
      *
      * @param  string $storyId
-     * @return string JSON or null
+     *
+     * @return string|null
      */
     public function getSingleStory($storyId)
     {
@@ -482,7 +522,7 @@ class Asana {
     /**
      * Returns all the workspaces.
      *
-     * @return string JSON or null
+     * @return string|null
      */
     public function getWorkspaces()
     {
@@ -490,27 +530,31 @@ class Asana {
     }
 
     /**
-     * Currently the only field that can be modified for a workspace is its name (as Asana API says).
+     * Currently the only field that can be modified for a
+     * workspace is its name (as Asana API says).
+     *
      * This method returns the complete updated workspace record.
      *
-     * @param  array  $data
-     * @return string JSON or null
+     * @param  array $data
+     *
+     * @return string|null
      */
-    public function updateWorkspace($workspaceId = null, $data = array("name" => ""))
+    public function updateWorkspace($workspaceId = null, $data = ["name" => ""])
     {
         $workspaceId = $workspaceId ?: $this->defaultWorkspaceId;
 
-        return $this->curl->put("workspaces/{$workspaceId}", array('data' => $data));
+        return $this->curl->put("workspaces/{$workspaceId}", ['data' => $data]);
     }
 
     /**
      * Returns tasks of all workspace assigned to someone.
+     *
      * Note: As Asana API says, you must specify an assignee when querying for workspace tasks.
      *
      * @param  string $workspaceId The id of the workspace
-     * @param  string $assignee Can be "me" or user ID
+     * @param  string $assignee    Can be "me" or user ID
      *
-     * @return string JSON or null
+     * @return string|null
      */
     public function getWorkspaceTasks($workspaceId = null, $assignee = "me")
     {
@@ -523,7 +567,8 @@ class Asana {
      * Returns tags of all workspace.
      *
      * @param string $workspaceId The id of the workspace
-     * @return string JSON or null
+     *
+     * @return string|null
      */
     public function getWorkspaceTags($workspaceId = null)
     {
@@ -536,7 +581,8 @@ class Asana {
      * Returns users of all workspace.
      *
      * @param  string $workspaceId The id of the workspace
-     * @return string JSON or null
+     *
+     * @return string|null
      */
     public function getWorkspaceUsers($workspaceId = null)
     {
@@ -549,12 +595,13 @@ class Asana {
      * Returns events of a given project
      *
      * @param  string $projectId The id of the project
-     * @return string JSON or null
+     *
+     * @return string|null
      */
     public function getProjectEvents($projectId = null)
     {
         $projectId = $projectId ?: $this->defaultProjectId;
-        
+
         return $this->curl->get("projects/{$projectId}/events");
     }
 
