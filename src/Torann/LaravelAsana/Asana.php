@@ -37,7 +37,7 @@ class Asana
     public function __construct($config)
     {
         // Initiate curl
-        $this->curl = new AsanaCurl(array_get($config, 'key'), array_get($config, 'accessToken'));
+        $this->curl = new AsanaCurl($config['accessToken']);
 
         // Set defaults
         $this->defaultWorkspaceId = $config['workspaceId'];

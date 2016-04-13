@@ -68,7 +68,7 @@ Asana::getUserInfo($user_id);
 
 #### Get current user
 
-Will return the user's info of the owner of the API key.
+Will return the user's info of the owner of the Personal Access Token.
 
 ```php
 Asana::getCurrentUser();
@@ -76,7 +76,7 @@ Asana::getCurrentUser();
 
 #### Get all users in all workspaces
 
-Will return the user's info of the owner of the API key.
+Will return the user's info of the owner of the Personal Access Token.
 
 ```php
 Asana::getUsers();
@@ -278,7 +278,21 @@ Asana::getTasksByFilter([
 ]);
 ```
 
+## Upgrading
+
+### Upgrade from v0.2 to v0.3
+
+Asana stopped supporting API keys, so now we must use a Personal Access Token. See Asana's directions for generating a [personal access tokens](https://asana.com/guide/help/api/api#gl-access-tokens). Then update the `config/asana.php` config file with the new token:
+
+```php
+'accessToken' => env('ASANA_TOKEN'),
+```
+
 ## Change Log
+
+#### v0.3.0
+
+- Remove API key (deprecated) support
 
 #### v0.2.1
 
