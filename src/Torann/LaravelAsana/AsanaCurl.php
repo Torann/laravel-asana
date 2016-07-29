@@ -165,7 +165,7 @@ class AsanaCurl
         // Make request
         try {
             $response = curl_exec($this->curl);
-            $response = json_decode($response);
+            $response = json_decode($response, false, 512, JSON_BIGINT_AS_STRING);
         } catch (Exception $e) {
             $this->errors = [$e->getMessage()];
             $response = null;
