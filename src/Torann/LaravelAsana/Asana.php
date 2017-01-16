@@ -242,13 +242,11 @@ class Asana
      */
     public function getTasksByFilter($filter = ["assignee" => "", "project" => "", "workspace" => ""])
     {
-        $url = "";
-        $filter = array_merge(["assignee" => "", "project" => "", "workspace" => ""], $filter);
-        $url .= $filter["assignee"] != "" ? "&assignee={$filter["assignee"]}" : "";
-        $url .= $filter["project"] != "" ? "&project={$filter["project"]}" : "";
-        $url .= $filter["workspace"] != "" ? "&workspace={$filter["workspace"]}" : "";
-        if (strlen($url) > 0) $url = "?" . substr($url, 1);
-
+        $filter = array_filter(array_merge(["assignee" => "", "project" => "", "workspace" => ""], $filter));
+        $url = '?' . join('&', array_map(function($k, $v){
+            return "{$k}={$v}";
+        }, array_keys($filter), $filter));
+        
         return $this->curl->get("tasks{$url}");
     }
 
