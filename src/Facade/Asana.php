@@ -1,8 +1,8 @@
 <?php
 
-namespace Torann\LaravelAsana;
+namespace Torann\LaravelAsana\Facade;
 
-class Facade extends \Illuminate\Support\Facades\Facade
+class Asana extends \Illuminate\Support\Facades\Facade
 {
     /**
      * Get the registered name of the component.

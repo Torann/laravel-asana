@@ -1,27 +1,29 @@
 {
   "name": "torann/laravel-asana",
-  "description": "Asna API wrapper for Laravel",
-  "keywords": ["laravel", "asana", "laravel 5", "laravel 4"],
+  "description": "Asana API wrapper for Laravel",
+  "keywords": ["laravel", "asana", "laravel 5"],
   "license": "BSD 2-Clause",
   "authors": [
     {
       "name": "Daniel Stainback",
-      "email": "daniel@lyften.com"
+      "email": "torann@gmail.com"
     }
    ],
   "require": {
     "php": ">=5.5.9",
-    "illuminate/support": "~5.0",
-    "illuminate/database": "~5.0"
+    "illuminate/support": "~5.0"
   },
   "autoload": {
+    "files": [
+      "src/helpers.php"
+    ],
     "psr-4": {
-      "Torann\\LaravelAsana\\": "src/Torann/LaravelAsana"
+      "Torann\\LaravelAsana\\": "src/"
     }
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "0.3-dev"
+      "dev-master": "0.4-dev"
     }
   }
 }

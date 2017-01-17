@@ -96,7 +96,7 @@ class Asana
      *     )
      * )
      *
-     * @return string|null
+     * @return object|null
      */
     public function createTask($data)
     {
@@ -167,11 +167,9 @@ class Asana
      */
     public function addTaskAttachment($taskId, $file)
     {
-        $data = [
-            'file' => $this->addPostFile($file)
-        ];
-
-        return $this->curl->post("tasks/{$taskId}/attachments", $data);
+        return $this->curl->post("tasks/{$taskId}/attachments", [
+            'file' => $file,
+        ]);
     }
 
     /**
@@ -243,10 +241,10 @@ class Asana
     public function getTasksByFilter($filter = ["assignee" => "", "project" => "", "workspace" => ""])
     {
         $filter = array_filter(array_merge(["assignee" => "", "project" => "", "workspace" => ""], $filter));
-        $url = '?' . join('&', array_map(function($k, $v){
-            return "{$k}={$v}";
-        }, array_keys($filter), $filter));
-        
+        $url = '?' . join('&', array_map(function ($k, $v) {
+                return "{$k}={$v}";
+            }, array_keys($filter), $filter));
+
         return $this->curl->get("tasks{$url}");
     }
 

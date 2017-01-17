@@ -11,11 +11,9 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function boot()
     {
-        if ($this->isLumen() === false) {
-            $this->publishes([
-                __DIR__ . '/../../config/asana.php' => config_path('asana.php'),
-            ]);
-        }
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/asana.php', 'asana'
+        );
     }
 
     /**
@@ -25,11 +23,39 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('torann.asana', function ($app) {
+        $this->registerAsanaService();
+
+        if ($this->app->runningInConsole()) {
+            $this->registerResources();
+        }
+    }
+
+    /**
+     * Register the Asana service.
+     *
+     * @return void
+     */
+    public function registerAsanaService()
+    {
+        $this->app->singleton('torann.asana', function ($app) {
             $config = $app->config->get('asana', []);
 
             return new Asana($config);
         });
+    }
+
+    /**
+     * Register Asana resources.
+     *
+     * @return void
+     */
+    public function registerResources()
+    {
+        if ($this->isLumen() === false) {
+            $this->publishes([
+                __DIR__ . '/../config/asana.php' => config_path('asana.php'),
+            ], 'config');
+        }
     }
 
     /**
