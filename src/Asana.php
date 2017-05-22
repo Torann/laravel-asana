@@ -620,4 +620,36 @@ class Asana
     {
         return $this->curl->getErrors();
     }
+
+	/**
+	 * getCustomFields
+	 *
+	 * Returns tall custom fields for a workspace
+	 *
+	 * @param $workspaceId
+	 *
+	 * @return null|string
+	 * @author Olly Warren https://github.com/ollywarren
+	 * @version 1.0
+	 */
+	public function getCustomFields($workspaceId)
+	{
+		return $this->curl->get("workspaces/{$workspaceId}/custom_fields");
+	}
+
+	/**
+	 * getCustomField
+	 *
+	 * Returns the full details on the custom field passed in.
+	 *
+	 * @param $fieldId
+	 *
+	 * @return null|string
+	 * @author Olly Warren https://github.com/ollywarren
+	 * @version 1.0
+	 */
+	public function getCustomField($fieldId)
+	{
+		return $this->curl->get("custom_fields/{$fieldId}");
+	}
 }
