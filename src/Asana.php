@@ -652,4 +652,69 @@ class Asana
 	{
 		return $this->curl->get("custom_fields/{$fieldId}");
 	}
+
+	/**
+	 * createWebhook
+	 *
+	 * Creates a webhook with asana based
+	 * Requires the resource to link with (Workspace, Project)
+	 * and a Target URL for your API/Application.
+	 *
+	 * Note: Will send a handshake to your Application with a
+	 * X-Security-Header that must be returned with a 200
+	 * Repsonse to verify the webhook creation. Asana may then
+	 * follow up with a "heartbeat" request that will contain an
+	 * empty "events" JSON object and a X-Signature-Header.
+	 *
+	 * @param $resourceId
+	 * @param $targetUrl
+	 *
+	 * @return null|string
+	 * @author Olly Warren https://github.com/ollywarren
+	 * @version 1.0
+	 */
+	public function createWebhook($resourceId, $targetUrl)
+	{
+		//Define the Data array to include in the request
+		$data = [
+			'data' => [
+				'resource'  => $resourceId,
+				'target'    => $targetUrl
+			]
+		];
+
+		return $this->curl->post("webhooks", $data);
+	}
+
+	/**
+	 * getWebhook
+	 *
+	 * Gets the full details for a Webhook.
+	 *
+	 * @param $webhookId
+	 *
+	 * @return null|string
+	 * @author Olly Warren https://github.com/ollywarren
+	 * @version 1.0
+	 */
+	public function getWebhook($webhookId)
+	{
+		return $this->curl->get("webhooks/{$webhookId}");
+	}
+
+	/**
+	 * deleteWebhook
+	 *
+	 * Removes a webhook from Asana.
+	 *
+	 * @param $webhookId
+	 *
+	 * @return null|string
+	 * @author Olly Warren https://github.com/ollywarren
+	 * @version 1.0
+	 */
+	public function deleteWebhook($webhookId)
+	{
+		return $this->curl->delete("webhooks/{$webhookId}");
+	}
 }
