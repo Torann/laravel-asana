@@ -662,7 +662,7 @@ class Asana
 	 *
 	 * Note: Will send a handshake to your Application with a
 	 * X-Security-Header that must be returned with a 200
-	 * Repsonse to verify the webhook creation. Asana may then
+	 * Response to verify the webhook creation. Asana may then
 	 * follow up with a "heartbeat" request that will contain an
 	 * empty "events" JSON object and a X-Signature-Header.
 	 *
@@ -701,6 +701,24 @@ class Asana
 	{
 		return $this->curl->get("webhooks/{$webhookId}");
 	}
+
+	/**
+	 * getWebhooks
+	 *
+	 * Gets all the webhooks for a workspace
+	 *
+	 * @param $workspaceId
+	 *
+	 * @return null|string
+	 * @author Olly Warren https://github.com/ollywarren
+	 * @version 1.0
+	 */
+	public function getWebhooks($workspaceId)
+	{
+		return $this->curl->get("webhooks?workspace={$workspaceId}");
+	}
+
+
 
 	/**
 	 * deleteWebhook
