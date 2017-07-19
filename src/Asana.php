@@ -172,6 +172,40 @@ class Asana
         ]);
     }
 
+	/**
+	 * getAllAttachments
+	 *
+	 * Gets a List of all available Attachments.
+	 *
+	 * @param $taskId
+	 *
+	 * @return null|string
+	 * @author  Olly Warren, Big Bite Creative
+	 * @package Torann\LaravelAsana
+	 * @version 1.0
+	 */
+	public function getAllAttachments($taskId)
+	{
+		return $this->curl->get("tasks/{$taskId}/attachments");
+	}
+
+	/**
+	 * getSingleAttachment
+	 *
+	 * Gets a Single Attachment based on a file id.
+	 *
+	 * @param $attachmentId
+	 *
+	 * @return null|string
+	 * @author  Olly Warren, Big Bite Creative
+	 * @package Torann\LaravelAsana
+	 * @version 1.0
+	 */
+	public function getSingleAttachment($attachmentId)
+	{
+		return $this->curl->get("attachments/{$attachmentId}");
+	}
+
     /**
      * Returns the projects associated to the task.
      *
