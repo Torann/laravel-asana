@@ -71,9 +71,10 @@ class Asana
      *
      * @return string|null
      */
-    public function getUsers()
+    public function getUsers($opt_fields = null)
     {
-        return $this->curl->get('users');
+        $url = $opt_fields ? 'users?opt_fields=' . $opt_fields : 'users';
+        return $this->curl->get($url);
     }
 
     /**
