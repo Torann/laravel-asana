@@ -173,6 +173,40 @@ class Asana
         ]);
     }
 
+	/**
+	 * getAllAttachments
+	 *
+	 * Gets a List of all available Attachments.
+	 *
+	 * @param $taskId
+	 *
+	 * @return null|string
+	 * @author  Olly Warren, Big Bite Creative
+	 * @package Torann\LaravelAsana
+	 * @version 1.0
+	 */
+	public function getAllAttachments($taskId)
+	{
+		return $this->curl->get("tasks/{$taskId}/attachments");
+	}
+
+	/**
+	 * getSingleAttachment
+	 *
+	 * Gets a Single Attachment based on a file id.
+	 *
+	 * @param $attachmentId
+	 *
+	 * @return null|string
+	 * @author  Olly Warren, Big Bite Creative
+	 * @package Torann\LaravelAsana
+	 * @version 1.0
+	 */
+	public function getSingleAttachment($attachmentId)
+	{
+		return $this->curl->get("attachments/{$attachmentId}");
+	}
+
     /**
      * Returns the projects associated to the task.
      *
@@ -621,4 +655,119 @@ class Asana
     {
         return $this->curl->getErrors();
     }
+
+	/**
+	 * getCustomFields
+	 *
+	 * Returns tall custom fields for a workspace
+	 *
+	 * @param $workspaceId
+	 *
+	 * @return null|string
+	 * @author Olly Warren https://github.com/ollywarren
+	 * @version 1.0
+	 */
+	public function getCustomFields($workspaceId)
+	{
+		return $this->curl->get("workspaces/{$workspaceId}/custom_fields");
+	}
+
+	/**
+	 * getCustomField
+	 *
+	 * Returns the full details on the custom field passed in.
+	 *
+	 * @param $fieldId
+	 *
+	 * @return null|string
+	 * @author Olly Warren https://github.com/ollywarren
+	 * @version 1.0
+	 */
+	public function getCustomField($fieldId)
+	{
+		return $this->curl->get("custom_fields/{$fieldId}");
+	}
+
+	/**
+	 * createWebhook
+	 *
+	 * Creates a webhook with asana based
+	 * Requires the resource to link with (Workspace, Project)
+	 * and a Target URL for your API/Application.
+	 *
+	 * Note: Will send a handshake to your Application with a
+	 * X-Security-Header that must be returned with a 200
+	 * Response to verify the webhook creation. Asana may then
+	 * follow up with a "heartbeat" request that will contain an
+	 * empty "events" JSON object and a X-Signature-Header.
+	 *
+	 * @param $resourceId
+	 * @param $targetUrl
+	 *
+	 * @return null|string
+	 * @author Olly Warren https://github.com/ollywarren
+	 * @version 1.0
+	 */
+	public function createWebhook($resourceId, $targetUrl)
+	{
+		//Define the Data array to include in the request
+		$data = [
+			'data' => [
+				'resource'  => $resourceId,
+				'target'    => $targetUrl
+			]
+		];
+
+		return $this->curl->post("webhooks", $data);
+	}
+
+	/**
+	 * getWebhook
+	 *
+	 * Gets the full details for a Webhook.
+	 *
+	 * @param $webhookId
+	 *
+	 * @return null|string
+	 * @author Olly Warren https://github.com/ollywarren
+	 * @version 1.0
+	 */
+	public function getWebhook($webhookId)
+	{
+		return $this->curl->get("webhooks/{$webhookId}");
+	}
+
+	/**
+	 * getWebhooks
+	 *
+	 * Gets all the webhooks for a workspace
+	 *
+	 * @param $workspaceId
+	 *
+	 * @return null|string
+	 * @author Olly Warren https://github.com/ollywarren
+	 * @version 1.0
+	 */
+	public function getWebhooks($workspaceId)
+	{
+		return $this->curl->get("webhooks?workspace={$workspaceId}");
+	}
+
+
+
+	/**
+	 * deleteWebhook
+	 *
+	 * Removes a webhook from Asana.
+	 *
+	 * @param $webhookId
+	 *
+	 * @return null|string
+	 * @author Olly Warren https://github.com/ollywarren
+	 * @version 1.0
+	 */
+	public function deleteWebhook($webhookId)
+	{
+		return $this->curl->delete("webhooks/{$webhookId}");
+	}
 }
