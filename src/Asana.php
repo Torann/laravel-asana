@@ -276,9 +276,7 @@ class Asana
     public function getTasksByFilter($filter = ["assignee" => "", "project" => "", "workspace" => ""])
     {
         $filter = array_filter(array_merge(["assignee" => "", "project" => "", "workspace" => ""], $filter));
-        $url = '?' . join('&', array_map(function ($k, $v) {
-                return "{$k}={$v}";
-            }, array_keys($filter), $filter));
+        $url = '?' . http_build_query($filter);
 
         return $this->curl->get("tasks{$url}");
     }
@@ -667,8 +665,12 @@ class Asana
 	 * @author Olly Warren https://github.com/ollywarren
 	 * @version 1.0
 	 */
-	public function getCustomFields($workspaceId)
+	public function getCustomFields($workspaceId = null)
 	{
+        if (is_null($workspaceId)) {
+            $workspaceId = $this->defaultWorkspaceId;
+        }
+
 		return $this->curl->get("workspaces/{$workspaceId}/custom_fields");
 	}
 
