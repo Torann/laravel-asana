@@ -667,9 +667,7 @@ class Asana
 	 */
 	public function getCustomFields($workspaceId = null)
 	{
-        if (is_null($workspaceId)) {
-            $workspaceId = $this->defaultWorkspaceId;
-        }
+        $workspaceId = $workspaceId ?: $this->defaultWorkspaceId;
 
 		return $this->curl->get("workspaces/{$workspaceId}/custom_fields");
 	}
