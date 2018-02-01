@@ -2,7 +2,7 @@
   "name": "torann/laravel-asana",
   "description": "Asana API wrapper for Laravel",
   "keywords": ["laravel", "asana", "laravel 5"],
-  "license": "BSD 2-Clause",
+  "license": "BSD-2-Clause",
   "authors": [
     {
       "name": "Daniel Stainback",
