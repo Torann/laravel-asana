@@ -802,4 +802,35 @@ class Asana
 
         return $this->curl->get("projects/{$projectId}/sections");
     }
+
+    /**
+     * Returns the complete record for a single section.
+     *
+     * @param  section The section to get.
+     * @return response
+     */
+    public function getSection($sectionId)
+    {
+        return $this->curl->get("sections/{$sectionId}");
+    }
+
+    /**
+     * A specific, existing section can be updated by making a PUT request on
+     * the URL for that project. Only the fields provided in the `data` block
+     * will be updated; any unspecified fields will remain unchanged. (note that
+     * at this time, the only field that can be updated is the `name` field.)
+     *
+     * When using this method, it is best to specify only those fields you wish
+     * to change, or else you may overwrite changes made by another user since
+     * you last retrieved the task.
+     *
+     * Returns the complete updated section record.
+     *
+     * @param  section The section to update.
+     * @return response
+     */
+    public function updateSection($sectionId, $data)
+    {
+        return $this->curl->put("sections/{$sectionId}", ['data' => $data]);
+    }
 }
