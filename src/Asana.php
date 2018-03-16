@@ -779,7 +779,7 @@ class Asana
      * @param  project The project to create the section in
      * @return response
      */
-    public function createSection($projectId = null, $data)
+    public function createSection($data, $projectId = null)
     {
         $projectId ?: $this->defaultProjectId;
 
