@@ -789,4 +789,17 @@ class Asana
 
         return $this->curl->post("projects/{$projectId}/sections", ['data' => $data]);
     }
+
+    /**
+     * Returns the compact records for all sections in the specified project.
+     *
+     * @param  project The project to get sections from.
+     * @return response
+     */
+    public function getProjectSections($projectId = null)
+    {
+        $projectId ?: $this->defaultProjectId;
+
+        return $this->curl->get("projects/{$projectId}/sections");
+    }
 }
