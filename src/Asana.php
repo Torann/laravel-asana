@@ -770,4 +770,23 @@ class Asana
 	{
 		return $this->curl->delete("webhooks/{$webhookId}");
 	}
+
+    /**
+     * Creates a new section in a project.
+     *
+     * Returns the full record of the newly created section.
+     *
+     * @param  project The project to create the section in
+     * @return response
+     */
+    public function createSection($projectId = null, $data)
+    {
+        $projectId ?: $this->defaultProjectId;
+
+        $data = array_merge([
+            'projects' => $projectId
+        ], $data);
+
+        return $this->curl->post("projects/{$projectId}/sections", ['data' => $data]);
+    }
 }
