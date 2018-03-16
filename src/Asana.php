@@ -781,7 +781,7 @@ class Asana
      */
     public function createSection($data, $projectId = null)
     {
-        $projectId ?: $this->defaultProjectId;
+        $projectId = $projectId ?: $this->defaultProjectId;
 
         $data = array_merge([
             'projects' => $projectId
@@ -798,7 +798,7 @@ class Asana
      */
     public function getProjectSections($projectId = null)
     {
-        $projectId ?: $this->defaultProjectId;
+        $projectId = $projectId ?: $this->defaultProjectId;
 
         return $this->curl->get("projects/{$projectId}/sections");
     }
@@ -867,7 +867,7 @@ class Asana
      */
     public function moveSection($projectId, $data)
     {
-        $projectId ?: $this->defaultProjectId;
+        $projectId = $projectId ?: $this->defaultProjectId;
 
         return $this->curl->post("projects/{$projectId}/sections/insert", ['data' => $data]);
     }
