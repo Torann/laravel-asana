@@ -1,5 +1,5 @@
 {
-  "name": "torann/laravel-asana",
+  "name": "convenia/laravel-asana",
   "description": "Asana API wrapper for Laravel",
   "keywords": ["laravel", "asana", "laravel 5"],
   "license": "BSD-2-Clause",
