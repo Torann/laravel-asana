@@ -851,4 +851,24 @@ class Asana
     {
         return $this->curl->delete("sections/{$sectionId}");
     }
+
+    /**
+     * Move sections relative to each other in a board view. One of
+     * `before_section` or `after_section` is required.
+     *
+     * Sections cannot be moved between projects.
+     *
+     * At this point in time, moving sections is not supported in list views, only board views.
+     *
+     * Returns an empty data block.
+     *
+     * @param  project The project in which to reorder the given section
+     * @return response
+     */
+    public function moveSection($projectId, $data)
+    {
+        $projectId ?: $this->defaultProjectId;
+
+        return $this->curl->post("projects/{$projectId}/sections/insert", ['data' => $data]);
+    }
 }
