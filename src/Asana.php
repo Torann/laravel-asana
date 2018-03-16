@@ -833,4 +833,22 @@ class Asana
     {
         return $this->curl->put("sections/{$sectionId}", ['data' => $data]);
     }
+
+    /**
+     * A specific, existing section can be deleted by making a DELETE request
+     * on the URL for that section.
+     *
+     * Note that sections must be empty to be deleted.
+     *
+     * The last remaining section in a board view cannot be deleted.
+     *
+     * Returns an empty data block.
+     *
+     * @param  section The section to delete.
+     * @return response
+     */
+    public function deleteSection($sectionId)
+    {
+        return $this->curl->delete("sections/{$sectionId}");
+    }
 }
