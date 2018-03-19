@@ -657,7 +657,7 @@ class Asana
     }
 
 	/**
-	 * getCustomFields
+	 * getWorkspaceCustomFields
 	 *
 	 * Returns tall custom fields for a workspace
 	 *
@@ -667,8 +667,10 @@ class Asana
 	 * @author Olly Warren https://github.com/ollywarren
 	 * @version 1.0
 	 */
-	public function getCustomFields($workspaceId)
+	public function getWorkspaceCustomFields($workspaceId = null)
 	{
+        $workspaceId = $workspaceId ?: $this->defaultWorkspaceId;
+
 		return $this->curl->get("workspaces/{$workspaceId}/custom_fields");
 	}
 
@@ -930,7 +932,6 @@ class Asana
         return $this->curl->delete("tags/{$tagId}");
     }
 
-
     /**
      * Creates a new subtask and adds it to the parent task. Returns the full record
      * for the newly created subtask.
@@ -941,5 +942,34 @@ class Asana
     public function createSubTask($taskId, $data)
     {
         return $this->curl->post("tasks/{$taskId}/subtasks", ['data' => $data]);
+    }
+
+
+    /**
+     * Returns a list of all of the custom fields settings on a project, in compact form. Note that,
+     * as in all queries to collections which return compact representation, `opt_fields` and
+     * `opt_expand` can be used to include more data than is returned in the compact representation.
+     * See the getting started guide on [input/output options](/developers/documentation/getting-started/input-output-options)
+     * for more information.
+     *
+     * @param  project The ID of the project for which to list custom field settings
+     * @return response
+     */
+    public function getProjectCustomFields($projectId = null)
+    {
+        $projectId = $projectId ?: $this->defaultProjectId;
+
+        return $this->curl->get("projects/{$projectId}/custom_field_settings");
+    }
+
+    /**
+     * Returns the complete definition of a custom field's metadata.
+     *
+     * @param  custom-field Globally unique identifier for the custom field.
+     * @return response
+     */
+    public function getCustomFields($customFieldId)
+    {
+        return $this->curl->get("custom_fields/{$customFieldId}");
     }
 }
