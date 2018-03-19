@@ -955,15 +955,4 @@ class Asana
 
         return $this->curl->get("projects/{$projectId}/custom_field_settings");
     }
-
-    /**
-     * Returns the complete definition of a custom field's metadata.
-     *
-     * @param  custom-field Globally unique identifier for the custom field.
-     * @return response
-     */
-    public function getCustomFields($customFieldId)
-    {
-        return $this->curl->get("custom_fields/{$customFieldId}");
-    }
 }
