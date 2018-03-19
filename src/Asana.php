@@ -871,4 +871,62 @@ class Asana
 
         return $this->curl->post("projects/{$projectId}/sections/insert", ['data' => $data]);
     }
+
+    /**
+     * Creates a new tag in a workspace or organization.
+     *
+     * Every tag is required to be created in a specific workspace or
+     * organization, and this cannot be changed once set. Note that you can use
+     * the `workspace` parameter regardless of whether or not it is an
+     * organization.
+     *
+     * Returns the full record of the newly created tag.
+     *
+     * @return response
+     */
+    public function createTag($data, $workspaceId = null)
+    {
+        $workspaceId = $workspaceId ?: $this->defaultWorkspaceId;
+
+        $data = array_merge([
+            'workspace' => $workspaceId
+        ], $data);
+
+        return $this->curl->post("tags", ['data' => $data]);
+    }
+
+    /**
+     * Creates a new tag in a workspace or organization.
+     *
+     * Every tag is required to be created in a specific workspace or
+     * organization, and this cannot be changed once set. Note that you can use
+     * the `workspace` parameter regardless of whether or not it is an
+     * organization.
+     *
+     * Returns the full record of the newly created tag.
+     *
+     * @param  workspace The workspace or organization to create the tag in.
+     * @return response
+     */
+    public function createTagInWorkspace($data, $workspaceId = null)
+    {
+        $workspaceId = $workspaceId ?: $this->defaultWorkspaceId;
+
+        return $this->curl->post("workspaces/{$workspaceId}/tags", ['data' => $data]);
+
+    }
+
+    /**
+     * A specific, existing tag can be deleted by making a DELETE request
+     * on the URL for that tag.
+     *
+     * Returns an empty data record.
+     *
+     * @param  tag The tag to delete.
+     * @return response
+     */
+    public function deleteTag($tagId)
+    {
+        return $this->curl->delete("tags/{$tagId}");
+    }
 }
