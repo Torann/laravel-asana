@@ -276,10 +276,7 @@ class Asana
     public function getTasksByFilter($filter = ["assignee" => "", "project" => "", "workspace" => ""])
     {
         $filter = array_filter(array_merge(["assignee" => "", "project" => "", "workspace" => ""], $filter));
-        $url = '?' . join('&', array_map(function ($k, $v) {
-                return "{$k}={$v}";
-            }, array_keys($filter), $filter));
-
+        $url = '?' . http_build_query($filter);
         return $this->curl->get("tasks{$url}");
     }
 
