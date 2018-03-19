@@ -929,4 +929,17 @@ class Asana
     {
         return $this->curl->delete("tags/{$tagId}");
     }
+
+
+    /**
+     * Creates a new subtask and adds it to the parent task. Returns the full record
+     * for the newly created subtask.
+     *
+     * @param  task The task to add a subtask to.
+     * @return response
+     */
+    public function createSubTask($taskId, $data)
+    {
+        return $this->curl->post("tasks/{$taskId}/subtasks", ['data' => $data]);
+    }
 }
