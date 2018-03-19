@@ -12,12 +12,14 @@ class Asana
      * @var int
      */
     public $defaultWorkspaceId;
+
     /**
      * Default project
      *
      * @var int
      */
     public $defaultProjectId;
+    
     /**
      * AsanaCurl instance
      *
