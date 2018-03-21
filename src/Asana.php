@@ -19,7 +19,7 @@ class Asana
      * @var int
      */
     public $defaultProjectId;
-    
+
     /**
      * AsanaCurl instance
      *
@@ -956,5 +956,41 @@ class Asana
         $projectId = $projectId ?: $this->defaultProjectId;
 
         return $this->curl->get("projects/{$projectId}/custom_field_settings");
+    }
+
+    /**
+     * Check if a tag name exists, if not then create a new one with this name.
+     *
+     * @param $tagName
+     * @return null|string|response
+     */
+    public function findOrCreateTag($tagName)
+    {
+        $tags = $this->getTags()->data;
+
+        foreach ($tags as $tag) {
+            if ($tag->name === $tagName) {
+                return $this->getTag($tag->id);
+            }
+        }
+
+        return $this->createTag(['name' => $tagName]);
+    }
+
+    /**
+     * Check if a user email exists and return user info.
+     *
+     * @param $email
+     * @return null|string
+     */
+    public function getUserByEmail($email)
+    {
+        $users = $this->getUsers('email')->data;
+
+        foreach ($users as $user){
+            if($user->email === $email){
+                return $this->getUserInfo($user->id);
+            }
+        }
     }
 }
