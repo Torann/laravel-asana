@@ -246,7 +246,7 @@ class Asana
      *
      * @return string|null
      */
-    public function moveTaskToSection($taskId, $sectionId, $projectId)
+    public function moveTaskToSection($taskId, $projectId, $sectionId)
     {
         $data = [
             'project' => $projectId,
