@@ -238,6 +238,25 @@ class Asana
     }
 
     /**
+     * Moves a task to a section
+     *
+     * @param  string $taskId
+     * @param  string $sectionId
+     * @param  string $projectId
+     *
+     * @return string|null
+     */
+    public function moveTaskToSection($taskId, $sectionId, $projectId)
+    {
+        $data = [
+            'project' => $projectId,
+            'section' => $sectionId
+        ];
+        
+        return $this->curl->post("tasks/{$taskId}/addProject", ['data' => $data]);
+    }
+
+    /**
      * Removes project from task. If successful, will
      * return success and an empty data block.
      *
