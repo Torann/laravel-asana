@@ -99,11 +99,11 @@ class Asana
      *
      * @return object|null
      */
-    public function createTask($data)
+    public function createTask($data, $projectId = null, $workspaceId = null)
     {
         $data = array_merge([
-            'workspace' => $this->defaultWorkspaceId,
-            'projects' => $this->defaultProjectId
+            'workspace' => $workspaceId ?: $this->defaultWorkspaceId,
+            'projects' => $projectId ?: $this->defaultProjectId
         ], $data);
 
         return $this->curl->post('tasks', ['data' => $data]);
@@ -246,11 +246,11 @@ class Asana
      *
      * @return string|null
      */
-    public function moveTaskToSection($taskId, $projectId, $sectionId)
+    public function moveTaskToSection($taskId, $sectionId, $projectId = null)
     {
         $data = [
-            'project' => $projectId,
-            'section' => $sectionId
+            'section' => $sectionId,
+            'project' => $projectId ?: $this->defaultProjectId,
         ];
         
         return $this->curl->post("tasks/{$taskId}/addProject", ['data' => $data]);
@@ -444,7 +444,7 @@ class Asana
      *
      * @return string|null
      */
-    public function updateProject($projectId = null, $data)
+    public function updateProject($data, $projectId = null)
     {
         $projectId = $projectId ?: $this->defaultProjectId;
 
