@@ -24,6 +24,14 @@
   "extra": {
     "branch-alias": {
       "dev-master": "0.4-dev"
+    },
+    "laravel": {
+      "providers": [
+        "Torann\\LaravelAsana\\ServiceProvider"
+      ],
+      "aliases": {
+        "Asana": "Torann\\LaravelAsana\\Facade\\Asana"
+      }
     }
   }
 }
