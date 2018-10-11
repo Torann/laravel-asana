@@ -18,7 +18,7 @@ return [
     |
     */
 
-    'workspaceId' => '',
+    'workspaceId' => env('ASANA_WORKSPACE_ID'),
 
     /*
     |--------------------------------------------------------------------------
@@ -27,6 +27,6 @@ return [
     |
     */
 
-    'projectId' => '',
+    'projectId' => env('ASANA_PROJECT_ID'),
 
 ];
