@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Torann\LaravelAsana;
 
@@ -12,8 +12,12 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
     public function boot()
     {
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/asana.php', 'asana'
+            dirname(__DIR__) . '/config/asana.php', 'asana'
         );
+
+        $this->commands([
+            \Torann\LaravelAsana\Commands\CustomFields::class,
+        ]);
     }
 
     /**
