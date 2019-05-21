@@ -354,6 +354,36 @@ class Asana
     }
 
     /**
+     * @param  string $taskId
+     * @param  array $followers
+     *
+     * @return string|null
+     */
+    public function addFollowersToTask($taskId, $followers)
+    {
+        $data = [
+            "followers" => $followers
+        ];
+
+        return $this->curl->post("tasks/{$taskId}/addFollowers", ['data' => $data]);
+    }
+
+    /**
+     * @param  string $taskId
+     * @param  array $followers
+     *
+     * @return string|null
+     */
+    public function removeFollowersFromTask($taskId, $followers)
+    {
+        $data = [
+            "followers" => $followers
+        ];
+
+        return $this->curl->post("tasks/{$taskId}/removeFollowers", ['data' => $data]);
+    }
+
+    /**
      * Function to create a project.
      *
      * @param array $data Array of data for the project following the Asana API documentation.
@@ -752,8 +782,6 @@ class Asana
 	{
 		return $this->curl->get("webhooks?workspace={$workspaceId}");
 	}
-
-
 
 	/**
 	 * deleteWebhook
