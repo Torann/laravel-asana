@@ -29,6 +29,7 @@ class CustomFields extends Command
     public function handle()
     {
         $workspaceId = $this->argument('workspaceId');
+
         if (!$workspaceId) {
             $workspaceId = config('asana.workspaceId');
         }
@@ -37,6 +38,7 @@ class CustomFields extends Command
 
         if (empty($fields->data)) {
             $this->info("\nno custom fields\n");
+            return;
         }
 
         $fields = collect($fields->data)->map(function($row) {

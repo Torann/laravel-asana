@@ -17,6 +17,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
         $this->commands([
             \Torann\LaravelAsana\Commands\CustomFields::class,
+            \Torann\LaravelAsana\Commands\Users::class,
         ]);
     }
 
