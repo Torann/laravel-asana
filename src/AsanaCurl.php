@@ -41,11 +41,10 @@ class AsanaCurl
      *
      * @var array
      */
-    private $headers
-      = [
+    private $headers = [
         'Accept' => 'Accept: application/json',
         'Accept' => 'Asana-Enable: new_rich_text',
-      ];
+    ];
 
     /**
      * Constructor
