@@ -1,17 +1,20 @@
 {
   "name": "torann/laravel-asana",
   "description": "Asana API wrapper for Laravel",
-  "keywords": ["laravel", "asana", "laravel 5"],
+  "keywords": [
+    "laravel",
+    "asana"
+  ],
   "license": "BSD-2-Clause",
   "authors": [
     {
       "name": "Daniel Stainback",
       "email": "torann@gmail.com"
     }
-   ],
+  ],
   "require": {
     "php": ">=5.5.9",
-    "illuminate/support": "~5.0 | ^6.0 | ^7.0"
+    "illuminate/support": "~5.0 | ^6.0 | ^7.0 | ^8.0"
   },
   "autoload": {
     "files": [
