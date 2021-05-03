@@ -770,4 +770,30 @@ class Asana
 	{
 		return $this->curl->delete("webhooks/{$webhookId}");
 	}
+
+    /**
+     * addFollowersToTask
+     *
+     * @param $taskId
+     * @param $followerIds
+     *
+     * @return string|null
+     */
+    public function addFollowersFromTask($taskId, $followerIds)
+    {
+        return $this->curl->post("tasks/$taskId/addFollowers", ["data" => ["followers" => $followerIds]]);
+    }
+
+    /**
+     * removeFollowersFromTask
+     *
+     * @param $taskId
+     * @param $followerIds
+     *
+     * @return string|null
+     */
+    public function removeFollowersFromTask($taskId, $followerIds)
+    {
+        return $this->curl->post("tasks/$taskId/removeFollowers", ["data" => ["followers" => $followerIds]]);
+    }
 }
