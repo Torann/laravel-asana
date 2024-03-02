@@ -1,32 +1,32 @@
 {
-  "name": "torann/laravel-asana",
-  "description": "Asana API wrapper for Laravel",
-  "keywords": [
-    "laravel",
-    "asana"
-  ],
-  "license": "BSD-2-Clause",
-  "authors": [
-    {
-      "name": "Daniel Stainback",
-      "email": "torann@gmail.com"
-    }
-  ],
-  "require": {
-    "php": ">=5.5.9",
-    "illuminate/support": "^5.5|^6.0|^7.0|^8.0|^9.0|^10.0"
-  },
-  "autoload": {
-    "files": [
-      "src/helpers.php"
+    "name": "torann/laravel-asana",
+    "description": "Asana API wrapper for Laravel",
+    "keywords": [
+        "laravel",
+        "asana"
     ],
-    "psr-4": {
-      "Torann\\LaravelAsana\\": "src/"
+    "license": "BSD-2-Clause",
+    "authors": [
+        {
+            "name": "Daniel Stainback",
+            "email": "torann@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "illuminate/support": "^5.5|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0"
+    },
+    "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
+        "psr-4": {
+            "Torann\\LaravelAsana\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.4-dev"
+        }
     }
-  },
-  "extra": {
-    "branch-alias": {
-      "dev-master": "0.4-dev"
-    }
-  }
 }
