@@ -1,10 +1,8 @@
 # Asana for Laravel
 
-[![Latest Stable Version](https://poser.pugx.org/torann/laravel-asana/v/stable.png)](https://packagist.org/packages/torann/laravel-asana)
-[![Total Downloads](https://poser.pugx.org/torann/laravel-asana/downloads.png)](https://packagist.org/packages/torann/laravel-asana)
+[![Latest Stable Version](https://poser.pugx.org/torann/laravel-asana/v/stable)](https://packagist.org/packages/torann/laravel-asana)
+[![Total Downloads](https://poser.pugx.org/torann/laravel-asana/downloads)](https://packagist.org/packages/torann/laravel-asana)
 [![Patreon donate button](https://img.shields.io/badge/patreon-donate-yellow.svg)](https://www.patreon.com/torann)
-[![Donate weekly to this project using Gratipay](https://img.shields.io/badge/gratipay-donate-yellow.svg)](https://gratipay.com/~torann)
-[![Donate to this project using Flattr](https://img.shields.io/badge/flattr-donate-yellow.svg)](https://flattr.com/profile/torann)
 [![Donate to this project using Paypal](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4CJA2A97NPYVU)
 
 Asana API wrapper for Laravel, supporting workspaces, projects, tasks, tags, users and stories.
